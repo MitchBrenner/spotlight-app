@@ -9,8 +9,6 @@ export default function InitialLayout() {
   if (!segments) {
     return null;
   }
-  console.log("segments:", segments[0]);
-  console.log("isSignedIn:", isSignedIn);
 
   const router = useRouter();
 
