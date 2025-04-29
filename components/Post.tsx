@@ -1,14 +1,46 @@
 import { View, Text, Touchable, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { styles } from "@/styles/feed.styles";
 import { Link } from "expo-router";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
+import { Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-// todo: add actual type
+type PostProps = {
+  post: {
+    _id: Id<"posts">;
+    imageUrl: string;
+    caption?: string;
+    likes: number;
+    comments: number;
+    _creationTime: number;
+    isLiked: boolean;
+    isBookmarked: boolean;
+    author: {
+      _id: string;
+      username: string;
+      image: string;
+    };
+  };
+};
 
 const Post = ({ post }: { post: any }) => {
+  const [isLiked, setIsLiked] = useState(post.isLiked);
+  const [likesCount, setLikesCount] = useState<number>(post.likes);
+
+  const toggleLike = useMutation(api.posts.toggleLike);
+
+  const handleLike = async () => {
+    try {
+      const newIsLiked = await toggleLike({ postId: post._id });
+      setIsLiked(newIsLiked);
+      setLikesCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
+    } catch (error) {}
+  };
+
   return (
     <View style={styles.post}>
       {/* Post header */}
@@ -47,8 +79,12 @@ const Post = ({ post }: { post: any }) => {
       {/* Post actions */}
       <View style={styles.postActions}>
         <View style={styles.postActionsLeft}>
-          <TouchableOpacity>
-            <Ionicons name="heart-outline" size={24} color="white" />
+          <TouchableOpacity onPress={handleLike}>
+            <Ionicons
+              name={isLiked ? "heart" : "heart-outline"}
+              size={24}
+              color={isLiked ? "red" : "white"}
+            />
           </TouchableOpacity>
           <TouchableOpacity>
             <Ionicons name="chatbubble-outline" size={22} color="white" />
