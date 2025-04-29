@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  FlatList,
 } from "react-native";
 import { styles } from "../../styles/feed.styles";
 import { useAuth } from "@clerk/clerk-expo";
@@ -38,27 +39,30 @@ export default function Index() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => <Post post={item} />}
+        keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
-      >
-        {/* Stories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.storiesContainer}
-        >
-          {STORIES.map((story) => (
-            <Story key={story!.id} story={story as Story} />
-          ))}
-        </ScrollView>
-
-        {/* Posts */}
-        {posts?.map((post) => <Post key={post._id} post={post} />)}
-      </ScrollView>
+        ListHeaderComponent={<StoriesSection />}
+      />
     </View>
   );
 }
+
+// Stories section
+const StoriesSection = () => (
+  <ScrollView
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    style={styles.storiesContainer}
+  >
+    {STORIES.map((story) => (
+      <Story key={story!.id} story={story as Story} />
+    ))}
+  </ScrollView>
+);
 
 const NoPostsFound = () => (
   <View

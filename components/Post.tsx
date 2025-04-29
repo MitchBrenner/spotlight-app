@@ -1,4 +1,10 @@
-import { View, Text, Touchable, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Touchable,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import React, { useState } from "react";
 import { styles } from "@/styles/feed.styles";
 import { Link } from "expo-router";

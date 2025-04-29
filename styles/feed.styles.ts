@@ -20,9 +20,9 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontFamily: "Menlo",
+    fontFamily: "JetBrainsMono-Medium",
     color: COLORS.primary,
-    // fontWeight: "600",
+    fontWeight: "600",
   },
   storiesContainer: {
     paddingVertical: 12,
