@@ -4,7 +4,6 @@ import { SymbolView, SymbolViewProps, SFSymbol } from "expo-symbols";
 import { COLORS } from "@/constants/theme";
 
 export default function TabLayout() {
-  console.log("TabLayout");
   return (
     <Tabs
       screenOptions={{

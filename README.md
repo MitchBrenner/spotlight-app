@@ -10,3 +10,5 @@ expo-image-picker for image picking
 expo-image for images
 
 npx expo install expo-file-system - to upload images performatively
+
+date-fns for formating our dates
