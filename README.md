@@ -12,3 +12,5 @@ expo-image for images
 npx expo install expo-file-system - to upload images performatively
 
 date-fns for formating our dates
+
+clerk used for auth, connected to convex via secure webhook with svix
