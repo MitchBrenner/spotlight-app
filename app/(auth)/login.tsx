@@ -12,6 +12,8 @@ export default function login() {
   const { startSSOFlow } = useSSO();
   const router = useRouter();
 
+  console.log("Login screen rendered");
+
   const handleGoogleSignIn = async () => {
     try {
       // Start the authentication process by calling `startSSOFlow()`

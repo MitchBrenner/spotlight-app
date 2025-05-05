@@ -16,6 +16,8 @@ export default function RootLayout() {
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded]);
 
+  console.log("Root layout loaded");
+
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>

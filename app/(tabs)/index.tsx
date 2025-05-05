@@ -17,9 +17,13 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Loader from "@/components/Loader";
 import Post from "@/components/Post";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  const { signOut } = useAuth();
+  const { isLoaded, isSignedIn, signOut } = useAuth();
+
+  if (!isLoaded) return <Loader />;
+  if (!isSignedIn) return <Redirect href="/(auth)/login" />;
 
   const posts = useQuery(api.posts.getFeedPosts);
   if (posts === undefined) return <Loader />;

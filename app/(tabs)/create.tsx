@@ -77,6 +77,8 @@ export default function CreateScreen() {
       console.log("Error uploading image:", error);
     } finally {
       setIsSharing(false);
+      setSelectedImage(null);
+      setCaption("");
     }
   };
 

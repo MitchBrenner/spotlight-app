@@ -45,6 +45,7 @@ const Post = ({ post }: { post: any }) => {
 
   const toggleLike = useMutation(api.posts.toggleLike);
   const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+  const deletePost = useMutation(api.posts.deletePost);
 
   // user stored in clerk
   const { user } = useUser();
@@ -74,6 +75,14 @@ const Post = ({ post }: { post: any }) => {
     } catch (error) {}
   };
 
+  const handleDelete = async () => {
+    try {
+      await deletePost({ postId: post._id });
+    } catch (error) {
+      console.log("Error deleting post:", error);
+    }
+  };
+
   return (
     <View style={styles.post}>
       {/* Post header */}
@@ -94,7 +103,7 @@ const Post = ({ post }: { post: any }) => {
         {/* show a delete button if owner */}
 
         {currentUser?._id === post.author._id ? (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleDelete()}>
             <Ionicons name="trash-outline" size={24} color="white" />
           </TouchableOpacity>
         ) : (
