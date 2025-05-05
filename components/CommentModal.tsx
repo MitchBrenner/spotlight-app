@@ -27,6 +27,9 @@ type CommentModalProps = {
   onCommentAdded: () => void;
 };
 
+// TODO: add comments on comments
+// allow users to comment on other peoplles comments
+
 export default function CommentModal({
   postId,
   visible,
