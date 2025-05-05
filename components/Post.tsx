@@ -12,10 +12,11 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import CommentModal from "./CommentModal";
 import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
+import { useUser } from "@clerk/clerk-expo";
 
 type PostProps = {
   post: {
@@ -40,14 +41,36 @@ const Post = ({ post }: { post: any }) => {
   const [likesCount, setLikesCount] = useState<number>(post.likes);
   const [commentsCount, setCommentsCount] = useState<number>(post.comments);
   const [showComments, setShowComments] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
 
   const toggleLike = useMutation(api.posts.toggleLike);
+  const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+
+  // user stored in clerk
+  const { user } = useUser();
+
+  // user stored in convex
+  const currentUser = useQuery(
+    api.users.getUserByClerkId,
+    user
+      ? {
+          clerkId: user?.id,
+        }
+      : "skip"
+  );
 
   const handleLike = async () => {
     try {
       const newIsLiked = await toggleLike({ postId: post._id });
       setIsLiked(newIsLiked);
       setLikesCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
+    } catch (error) {}
+  };
+
+  const handleBookmark = async () => {
+    try {
+      const newIsBookmarked = await toggleBookmark({ postId: post._id });
+      setIsBookmarked(newIsBookmarked);
     } catch (error) {}
   };
 
@@ -69,13 +92,16 @@ const Post = ({ post }: { post: any }) => {
         </Link>
 
         {/* show a delete button if owner */}
-        {/* <TouchableOpacity>
-          <Ionicons name="ellipsis-horizontal" size={24} color="white" />
-        </TouchableOpacity> */}
 
-        <TouchableOpacity>
-          <Ionicons name="trash-outline" size={24} color={COLORS.primary} />
-        </TouchableOpacity>
+        {currentUser?._id === post.author._id ? (
+          <TouchableOpacity>
+            <Ionicons name="trash-outline" size={24} color="white" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity>
+            <Ionicons name="ellipsis-horizontal" size={24} color="white" />
+          </TouchableOpacity>
+        )}
       </View>
       {/* Image */}
       <Image
@@ -100,25 +126,32 @@ const Post = ({ post }: { post: any }) => {
             <Ionicons name="chatbubble-outline" size={22} color="white" />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity>
-          <Ionicons name="bookmark-outline" size={22} color="white" />
+        <TouchableOpacity onPress={handleBookmark}>
+          {isBookmarked ? (
+            <Ionicons name="bookmark" size={22} color={COLORS.white} />
+          ) : (
+            <Ionicons name="bookmark-outline" size={22} color="white" />
+          )}
         </TouchableOpacity>
       </View>
 
       {/* Post info */}
       <View style={styles.postInfo}>
-        <Text style={styles.likesText}>{post.likes} likes</Text>
+        <Text style={styles.likesText}>{likesCount} likes</Text>
         {post.caption && (
           <View style={styles.captionContainer}>
             <Text style={styles.captionUsername}>{post.author.username}</Text>
             <Text style={styles.captionText}>{post.caption}</Text>
           </View>
         )}
-        <TouchableOpacity onPress={() => setShowComments(true)}>
-          <Text style={styles.commentsText}>
-            View all {post.comments} comments
-          </Text>
-        </TouchableOpacity>
+        {commentsCount > 0 && (
+          <TouchableOpacity onPress={() => setShowComments(true)}>
+            <Text style={styles.commentsText}>
+              View all {commentsCount}{" "}
+              {commentsCount > 1 ? "comments" : "comment"}
+            </Text>
+          </TouchableOpacity>
+        )}
         <Text style={styles.timeAgo}>
           {formatDistanceToNowStrict(post._creationTime, { addSuffix: true })}
         </Text>
