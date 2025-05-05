@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { styles } from "@/styles/auth.styles";
 import { SymbolView } from "expo-symbols";
 import { COLORS } from "@/constants/theme";
@@ -9,12 +9,15 @@ import { useRouter } from "expo-router";
 import * as AuthSession from "expo-auth-session";
 
 export default function login() {
+  const [signingIn, setSigningIn] = useState(false);
+
   const { startSSOFlow } = useSSO();
   const router = useRouter();
 
   console.log("Login screen rendered");
 
   const handleGoogleSignIn = async () => {
+    setSigningIn(true);
     try {
       // Start the authentication process by calling `startSSOFlow()`
       const { createdSessionId, setActive, signIn, signUp } =
@@ -40,6 +43,8 @@ export default function login() {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
+    } finally {
+      setSigningIn(false);
     }
   };
 
@@ -77,6 +82,7 @@ export default function login() {
           style={styles.googleButton}
           onPress={handleGoogleSignIn}
           activeOpacity={0.9}
+          disabled={signingIn}
         >
           <View style={styles.googleIconContainer}>
             <Ionicons name="logo-google" size={20} color={COLORS.surface} />
