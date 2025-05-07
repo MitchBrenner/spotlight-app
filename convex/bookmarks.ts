@@ -34,7 +34,7 @@ export const toggleBookmark = mutation({
 });
 
 export const getBookmarks = query({
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const currentUser = await getAuthenticatedUser(ctx);
 
     const bookmarks = await ctx.db

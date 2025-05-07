@@ -8,7 +8,7 @@ import { styles } from "@/styles/feed.styles";
 import { Image } from "expo-image";
 
 export default function Bookmarks() {
-  const bookmarkedPosts = useQuery(api.bookmarks.getBookmarks, {});
+  const bookmarkedPosts = useQuery(api.bookmarks.getBookmarks);
 
   if (bookmarkedPosts === undefined) return <Loader />;
 

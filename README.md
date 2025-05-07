@@ -18,3 +18,4 @@ clerk used for auth, connected to convex via secure webhook with svix
 ## TODO:
 
 FIX this README.md
+delete notificaion if user unlikes a post
