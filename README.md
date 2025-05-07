@@ -36,12 +36,7 @@ Spotlight makes sharing moments effortless. Upload images, add captions, interac
 
 ## 📸 Screenshots
 
-![Home Feed](./assets/images/screenshot1.png)  
-![Post Creation](./assets/images/screenshot2.png)  
-![Comments Thread](./assets/images/screenshot3.png)  
-![Profile View](./assets/images/screenshot4.png)  
-![Notifications](./assets/images/screenshot5.png)
+| ![Home Feed](./assets/images/screenshot1.png) | ![Post Creation](./assets/images/screenshot2.png) | ![Comments Thread](./assets/images/screenshot3.png) |
+|-----------------------------------------------|--------------------------------------------------|------------------------------------------------------|
+| ![Profile View](./assets/images/screenshot4.png) | ![Notifications](./assets/images/screenshot5.png) |                                                      |
 
----
-
-Enjoy exploring Spotlight! Feel free to reach out with any issues or feature requests. 💬
