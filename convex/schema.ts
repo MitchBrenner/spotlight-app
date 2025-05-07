@@ -45,7 +45,7 @@ export default defineSchema({
   })
     .index("by_follower", ["followerId"]) // this will show all the users that mitch follows if mitch is the followerId
     .index("by_following", ["followingId"]) // this will show all the users that follow mitch if mitch is the followingId
-    .index("by_both", ["followerId", "followingId"]), // this will show if mitch follows will and will follows mitch
+    .index("by_both", ["followerId", "followingId"]), // this will show if mitch follows will
 
   notifications: defineTable({
     receiverId: v.id("users"),

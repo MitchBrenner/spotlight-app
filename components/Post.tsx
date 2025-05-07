@@ -38,8 +38,7 @@ type PostProps = {
 
 const Post = ({ post }: { post: any }) => {
   const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likesCount, setLikesCount] = useState<number>(post.likes);
-  const [commentsCount, setCommentsCount] = useState<number>(post.comments);
+
   const [showComments, setShowComments] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
 
@@ -64,7 +63,7 @@ const Post = ({ post }: { post: any }) => {
     try {
       const newIsLiked = await toggleLike({ postId: post._id });
       setIsLiked(newIsLiked);
-      setLikesCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
+      // setLikesCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
     } catch (error) {}
   };
 
@@ -87,7 +86,14 @@ const Post = ({ post }: { post: any }) => {
     <View style={styles.post}>
       {/* Post header */}
       <View style={styles.postHeader}>
-        <Link href={`/(tabs)/notifications`}>
+        <Link
+          href={
+            currentUser?._id === post.author._id
+              ? `/(tabs)/profile`
+              : `/user/${post.author._id}`
+          }
+          asChild
+        >
           <TouchableOpacity style={styles.postHeaderLeft}>
             <Image
               source={post.author.image}
@@ -146,18 +152,18 @@ const Post = ({ post }: { post: any }) => {
 
       {/* Post info */}
       <View style={styles.postInfo}>
-        <Text style={styles.likesText}>{likesCount} likes</Text>
+        <Text style={styles.likesText}>{post.likes} likes</Text>
         {post.caption && (
           <View style={styles.captionContainer}>
             <Text style={styles.captionUsername}>{post.author.username}</Text>
             <Text style={styles.captionText}>{post.caption}</Text>
           </View>
         )}
-        {commentsCount > 0 && (
+        {post.comments > 0 && (
           <TouchableOpacity onPress={() => setShowComments(true)}>
             <Text style={styles.commentsText}>
-              View all {commentsCount}{" "}
-              {commentsCount > 1 ? "comments" : "comment"}
+              View all {post.comments}{" "}
+              {post.comments > 1 ? "comments" : "comment"}
             </Text>
           </TouchableOpacity>
         )}
@@ -170,7 +176,6 @@ const Post = ({ post }: { post: any }) => {
         postId={post._id}
         visible={showComments}
         onClose={() => setShowComments(false)}
-        onCommentAdded={() => setCommentsCount((prev) => prev + 1)}
       />
     </View>
   );

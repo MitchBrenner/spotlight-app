@@ -24,17 +24,12 @@ type CommentModalProps = {
   postId: Id<"posts">;
   visible: boolean;
   onClose: () => void;
-  onCommentAdded: () => void;
 };
-
-// TODO: add comments on comments
-// allow users to comment on other peoplles comments
 
 export default function CommentModal({
   postId,
   visible,
   onClose,
-  onCommentAdded,
 }: CommentModalProps) {
   const [newCommnent, setNewComment] = useState<string>("");
 
@@ -54,7 +49,6 @@ export default function CommentModal({
       });
 
       setNewComment("");
-      onCommentAdded();
     } catch (error) {
       console.log("Error adding comment:", error);
     }

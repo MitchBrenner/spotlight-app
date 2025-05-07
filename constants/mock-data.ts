@@ -1,12 +1,5 @@
 export const STORIES = [
   {
-    id: "1",
-    username: "You",
-    avatar:
-      "https://pbs.twimg.com/profile_images/1593304942210478080/TUYae5z7_400x400.jpg",
-    hasStory: false,
-  },
-  {
     id: "2",
     username: "rick.sanchez",
     avatar:

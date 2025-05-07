@@ -1,5 +1,6 @@
+import { Id } from "./_generated/dataModel";
 import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 
 // createUser is a mutation that creates a user in the database
 export const createUser = mutation({
@@ -49,7 +50,7 @@ export const getUserByClerkId = query({
 
 export async function getAuthenticatedUser(ctx: QueryCtx | MutationCtx) {
   const identity = await ctx.auth.getUserIdentity();
-  if (!identity) console.log("not authenticated"); // throw new Error("Not authenticated");
+  if (!identity) throw new ConvexError("User must be signed in");
 
   const currentUser = await ctx.db
     .query("users")
@@ -76,3 +77,99 @@ export const updateProfile = mutation({
     });
   },
 });
+
+export const getUserProfile = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.userId);
+    if (!user) throw new Error("User not found");
+
+    return user;
+  },
+});
+
+export const isFollowing = query({
+  args: {
+    followingId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+
+    // check if the user is following the other user
+    const follow = await ctx.db
+      .query("follows")
+      .withIndex("by_both", (q) =>
+        q.eq("followerId", currentUser._id).eq("followingId", args.followingId)
+      )
+      .first();
+
+    return !!follow;
+  },
+});
+
+export const toggleFollow = mutation({
+  args: {
+    followingId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    // get the current user
+    const currentUser = await getAuthenticatedUser(ctx);
+
+    // check if the user is following the other user
+    const following = await ctx.db
+      .query("follows")
+      .withIndex("by_both", (q) =>
+        q.eq("followerId", currentUser._id).eq("followingId", args.followingId)
+      )
+      .first();
+
+    if (following) {
+      // unfollow the user
+      await ctx.db.delete(following._id);
+
+      // decrement the number of followers for the user
+      // decrement the number of following for the current user
+      await updateFollowCounts(ctx, currentUser._id, args.followingId, false);
+    } else {
+      // follow the user
+
+      await ctx.db.insert("follows", {
+        followerId: currentUser._id,
+        followingId: args.followingId,
+      });
+
+      // increment the number of followers for the user
+      // increment the number of following for the current user
+      await updateFollowCounts(ctx, currentUser._id, args.followingId, true);
+
+      // create notification
+      await ctx.db.insert("notifications", {
+        receiverId: args.followingId,
+        senderId: currentUser._id,
+        type: "follow",
+      });
+    }
+  },
+});
+
+async function updateFollowCounts(
+  ctx: MutationCtx,
+  followerId: Id<"users">,
+  followingId: Id<"users">,
+  isFollowing: boolean
+) {
+  const follower = await ctx.db.get(followerId);
+  const following = await ctx.db.get(followingId);
+
+  if (!follower || !following) throw new Error("User not found");
+
+  await ctx.db.patch(follower._id, {
+    following: isFollowing ? follower.following + 1 : follower.following - 1,
+  });
+
+  await ctx.db.patch(following._id, {
+    followers: isFollowing ? following.followers + 1 : following.followers - 1,
+  });
+}
