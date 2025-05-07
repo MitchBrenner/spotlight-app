@@ -1,12 +1,7 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  DevSettings,
-  Alert,
-} from "react-native";
-import React, { useState } from "react";
+"use client";
+
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import { styles } from "@/styles/auth.styles";
 import { SymbolView } from "expo-symbols";
 import { COLORS } from "@/constants/theme";
@@ -16,7 +11,7 @@ import { useRouter } from "expo-router";
 import * as AuthSession from "expo-auth-session";
 import * as Updates from "expo-updates";
 import * as SecureStore from "expo-secure-store";
-import { tokenCache } from "@clerk/clerk-expo/dist/token-cache";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
 
 export default function login() {
   const [signingIn, setSigningIn] = useState(false);
@@ -30,7 +25,7 @@ export default function login() {
     try {
       // Start the authentication process by calling `startSSOFlow()`
       console.log("Starting SSO flow");
-      const { createdSessionId, setActive, signIn, signUp, authSessionResult } =
+      const { createdSessionId, setActive, signIn, signUp } =
         await startSSOFlow({
           strategy: "oauth_google",
           // For web, defaults to current path
@@ -39,19 +34,21 @@ export default function login() {
           redirectUrl: AuthSession.makeRedirectUri(),
         });
 
-      if (
-        authSessionResult?.type === "cancel" ||
-        authSessionResult?.type === "dismiss"
-      ) {
-        console.log("User cancelled SSO");
-        return;
-      }
-      // If sign in was successful, set the active session
+      // if (
+      //   authSessionResult?.type === "cancel" ||
+      //   authSessionResult?.type === "dismiss"
+      // ) {
+      //   console.log("User cancelled SSO");
+      //   return;
+      // }
+
       console.log("SSO flow completed");
       console.log("Created session ID:", createdSessionId);
       console.log("Set active session:", setActive);
-      if (createdSessionId && setActive) {
-        setActive({ session: createdSessionId });
+
+      // If sign in was successful, set the active session
+      if (createdSessionId) {
+        setActive!({ session: createdSessionId });
         router.replace("/(tabs)");
       } else {
         console.log("No session created");

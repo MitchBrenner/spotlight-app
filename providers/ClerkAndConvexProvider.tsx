@@ -1,3 +1,4 @@
+"use client";
 /**
  * ClerkAndConvexProvider.tsx
  *
@@ -10,12 +11,11 @@
  * Used throughout the app to ensure authentication and database clients are initialized properly.
  */
 
-import { View, Text } from "react-native";
 import React from "react";
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
-import { tokenCache } from "@clerk/clerk-expo/dist/token-cache";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
+import { tokenCache } from "@/cache";
 
 const ClerkAndConvexProvider = ({
   children,

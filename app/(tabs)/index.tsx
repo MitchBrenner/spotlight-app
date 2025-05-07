@@ -1,23 +1,21 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  FlatList,
-} from "react-native";
-import { styles } from "../../styles/feed.styles";
-import { useAuth } from "@clerk/clerk-expo";
-import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "@/constants/theme";
-import { STORIES } from "@/constants/mock-data";
-import Story from "@/components/Story";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import Loader from "@/components/Loader";
 import Post from "@/components/Post";
+import Story from "@/components/Story";
+import { STORIES } from "@/constants/mock-data";
+import { COLORS } from "@/constants/theme";
+import { api } from "@/convex/_generated/api";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "convex/react";
 import { Redirect } from "expo-router";
+import {
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { styles } from "../../styles/feed.styles";
 
 export default function Index() {
   const { isLoaded, isSignedIn, signOut } = useAuth();

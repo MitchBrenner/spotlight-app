@@ -5,7 +5,7 @@ import { Alert, Button, Text, TouchableOpacity, View } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { DevSettings } from "react-native";
 import * as Updates from "expo-updates";
-import { tokenCache } from "@clerk/clerk-expo/dist/token-cache";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
 
 export default function InitialLayout() {
   const { isLoaded, isSignedIn } = useAuth();
