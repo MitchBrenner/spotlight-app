@@ -201,3 +201,25 @@ export const deletePost = mutation({
     });
   },
 });
+
+export const getPostByUser = query({
+  args: {
+    userId: v.optional(v.id("users")),
+  },
+  handler: async (ctx, args) => {
+    // get the current user
+    const user = args.userId
+      ? await ctx.db.get(args.userId)
+      : await getAuthenticatedUser(ctx);
+
+    if (!user) throw new Error("User not found");
+
+    const posts = await ctx.db
+      .query("posts")
+      .withIndex("by_user", (q) => q.eq("userId", user._id)) // (..., args.userId || user._id)
+      .order("desc")
+      .collect();
+
+    return posts;
+  },
+});

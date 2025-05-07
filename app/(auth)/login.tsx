@@ -1,23 +1,24 @@
-"use client";
-
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { styles } from "@/styles/auth.styles";
-import { SymbolView } from "expo-symbols";
 import { COLORS } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
-import { ClerkLoaded, useSSO } from "@clerk/clerk-expo";
-import { useRouter } from "expo-router";
-import * as AuthSession from "expo-auth-session";
-import * as Updates from "expo-updates";
-import * as SecureStore from "expo-secure-store";
+import { styles } from "@/styles/auth.styles";
+import { useSSO } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { Ionicons } from "@expo/vector-icons";
+import * as AuthSession from "expo-auth-session";
+import { useRouter } from "expo-router";
+import { SymbolView } from "expo-symbols";
+import React, { useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import * as WebBrowser from "expo-web-browser";
+import * as SecureStore from "expo-secure-store";
+import * as Updates from "expo-updates";
+import { useClerk } from "@clerk/clerk-expo";
 
 export default function login() {
   const [signingIn, setSigningIn] = useState(false);
 
   const { startSSOFlow } = useSSO();
   const router = useRouter();
+  const { signOut } = useClerk();
 
   const handleGoogleSignIn = async () => {
     setSigningIn(true);

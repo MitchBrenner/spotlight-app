@@ -22,6 +22,15 @@ const createTokenCache = (): TokenCache => {
     saveToken: (key: string, token: string) => {
       return SecureStore.setItemAsync(key, token);
     },
+    // idk if we need this
+    clearToken: async (key: string) => {
+      try {
+        await SecureStore.deleteItemAsync(key);
+        console.log(`Cleared token for key: ${key}`);
+      } catch (error) {
+        console.error("secure store delete item error: ", error);
+      }
+    },
   };
 };
 

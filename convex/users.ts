@@ -49,14 +49,30 @@ export const getUserByClerkId = query({
 
 export async function getAuthenticatedUser(ctx: QueryCtx | MutationCtx) {
   const identity = await ctx.auth.getUserIdentity();
-  if (!identity) throw new Error("Not authenticated");
+  if (!identity) console.log("not authenticated"); // throw new Error("Not authenticated");
 
   const currentUser = await ctx.db
     .query("users")
-    .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+    .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity!.subject))
     .first();
 
   if (!currentUser) throw new Error("User not found");
 
   return currentUser;
 }
+
+export const updateProfile = mutation({
+  args: {
+    fullname: v.string(),
+    bio: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+
+    // update the user
+    await ctx.db.patch(currentUser._id, {
+      fullname: args.fullname,
+      bio: args.bio,
+    });
+  },
+});
