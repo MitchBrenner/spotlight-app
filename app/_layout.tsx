@@ -3,7 +3,7 @@ import InitialLayout from "@/components/InitialLayout";
 import ClerkAndConvexProvider from "@/providers/ClerkAndConvexProvider";
 import { SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -12,19 +12,19 @@ export default function RootLayout() {
     "JetBrainsMono-Medium": require("@/assets/fonts/JetBrainsMono-Medium.ttf"),
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) SplashScreen.hideAsync();
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+      // console.log("✅ SplashScreen manually hidden");
+    }
   }, [fontsLoaded]);
 
-  console.log("Root layout loaded");
+  // console.log("Root layout loaded");
 
   return (
     <ClerkAndConvexProvider>
       <SafeAreaProvider>
-        <SafeAreaView
-          style={{ flex: 1, backgroundColor: "#000" }}
-          onLayout={onLayoutRootView}
-        >
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
           <InitialLayout />
         </SafeAreaView>
       </SafeAreaProvider>

@@ -1,4 +1,11 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  DevSettings,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import { styles } from "@/styles/auth.styles";
 import { SymbolView } from "expo-symbols";
@@ -7,6 +14,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { ClerkLoaded, useSSO } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import * as AuthSession from "expo-auth-session";
+import * as Updates from "expo-updates";
+import * as SecureStore from "expo-secure-store";
+import { tokenCache } from "@clerk/clerk-expo/dist/token-cache";
 
 export default function login() {
   const [signingIn, setSigningIn] = useState(false);
@@ -14,13 +24,13 @@ export default function login() {
   const { startSSOFlow } = useSSO();
   const router = useRouter();
 
-  console.log("Login screen rendered");
-
   const handleGoogleSignIn = async () => {
     setSigningIn(true);
+    console.log("Google sign in pressed");
     try {
       // Start the authentication process by calling `startSSOFlow()`
-      const { createdSessionId, setActive, signIn, signUp } =
+      console.log("Starting SSO flow");
+      const { createdSessionId, setActive, signIn, signUp, authSessionResult } =
         await startSSOFlow({
           strategy: "oauth_google",
           // For web, defaults to current path
@@ -28,21 +38,31 @@ export default function login() {
           // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
           redirectUrl: AuthSession.makeRedirectUri(),
         });
+
+      if (
+        authSessionResult?.type === "cancel" ||
+        authSessionResult?.type === "dismiss"
+      ) {
+        console.log("User cancelled SSO");
+        return;
+      }
       // If sign in was successful, set the active session
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
+      console.log("SSO flow completed");
+      console.log("Created session ID:", createdSessionId);
+      console.log("Set active session:", setActive);
+      if (createdSessionId && setActive) {
+        setActive({ session: createdSessionId });
         router.replace("/(tabs)");
       } else {
         console.log("No session created");
+
         // If there is no `createdSessionId`,
         // there are missing requirements, such as MFA
         // Use the `signIn` or `signUp` returned from `startSSOFlow`
         // to handle next steps
       }
-    } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
-      console.error(JSON.stringify(err, null, 2));
+    } catch (err: any) {
+      const errorCode = err?.errors?.[0]?.code;
     } finally {
       setSigningIn(false);
     }

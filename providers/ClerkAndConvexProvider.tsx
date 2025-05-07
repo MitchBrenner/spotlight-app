@@ -44,7 +44,7 @@ const ClerkAndConvexProvider = ({
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <ClerkLoaded>{children}</ClerkLoaded>
+        {children}
       </ConvexProviderWithClerk>
     </ClerkProvider>
   );
